@@ -12,15 +12,15 @@ public class RewardedAdTest : MonoSingleton<RewardedAdTest>
 
     private int _amountOfCoins = 0;
 
-    private void Awake()
+    private void Start()
     {
         SetAddButtonInactive();
-        AdIntegrationManager.Instance.OnRewardedAdFinishedLoading.AddListener(SetAddButtonActive);
+        AdIntegrationHandler.Instance.OnRewardedAdFinishedLoading.AddListener(SetAddButtonActive);
     }
 
     public void OnRewardedAdButtonClicked()
     {
-        AdIntegrationManager.Instance.PlayRewardedAd(() => AddCoins(20));
+        AdIntegrationHandler.Instance.PlayRewardedAd(() => AddCoins(20));
     }
 
     public void AddCoins(int coinsToAdd, bool setInactive = true)

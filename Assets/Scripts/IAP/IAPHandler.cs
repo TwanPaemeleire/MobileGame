@@ -6,27 +6,32 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Purchasing;
 
-public class IAPManager : MonoSingleton<IAPManager>
+public class IAPHandler : MonoSingleton<IAPHandler>
 {
     private StoreController _storeController;
+    private bool _storeConnected = false;
     private Func<PendingOrder, bool> _currentOrderPendingCallback;
+    public bool StoreConnected => _storeConnected;
     public UnityEvent OnStoreReadyForPurchases = new UnityEvent();
 
-    private async void Start()
+    protected override void Init()
     {
-        await Initialize();
+        CallInitialize();
     }
 
-    private async Task Initialize()
+    private async void CallInitialize()
+    {
+        await InitializeStore();
+    }
+
+    private async Task InitializeStore()
     {
         _storeController = UnityIAPServices.StoreController();
-
         _storeController.OnPurchasePending += OnPurchasePending;
         _storeController.OnStoreDisconnected += OnStoreDisconnected;
         _storeController.OnProductsFetched += OnProductsFetched;
         _storeController.OnProductsFetchFailed += OnProductsFetchFailed;
         _storeController.OnStoreConnected += OnStoreConnected;
-
         _storeController.OnPurchaseFailed += OnPurchaseFailed;
         _storeController.OnPurchaseDeferred += OnPurchaseDeferred;
         _storeController.OnPurchaseConfirmed += OnPurchaseConfirmed;
@@ -34,7 +39,6 @@ public class IAPManager : MonoSingleton<IAPManager>
         await _storeController.Connect();
 
         ProductCatalog catalog = ProductCatalog.LoadDefaultCatalog();
-
         CatalogProvider catalogProvider = CodelessCatalogProvider.PopulateCatalogProvider(catalog);
 
         catalogProvider.FetchProducts(products =>
@@ -63,6 +67,7 @@ public class IAPManager : MonoSingleton<IAPManager>
     private void OnStoreConnected()
     {
         Debug.Log("IAP store connected");
+        _storeConnected = true;
     }
 
     private void OnProductsFetched(List<Product> products)

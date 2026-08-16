@@ -5,8 +5,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class AdIntegrationManager : MonoSingleton<AdIntegrationManager>
+public class AdIntegrationHandler : MonoSingleton<AdIntegrationHandler>
 {
+    [SerializeField]
+    private bool _runTestSuite = false;
     private string _rewardedAdUnitId = "snm7yvaysvvkfsny";
     private LevelPlayRewardedAd _rewardedAd;
     private bool _sdkInitialized = false;
@@ -14,13 +16,15 @@ public class AdIntegrationManager : MonoSingleton<AdIntegrationManager>
     private Action _onCurrentRewardedAddFinished = null;
 
     public bool AdIsLoading => _adIsLoading;
+    public bool SdkInitialized => _sdkInitialized;
     public UnityEvent OnRewardedAdFinishedLoading = new UnityEvent();
 
-    void Start()
+    protected override void Init()
     {
+        if (_runTestSuite) LevelPlay.SetMetaData("is_test_suite", "enable");
         LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
         LevelPlay.OnInitFailed += SdkInitializationFailedEvent;
-        LevelPlay.Init("279d100a5"); 
+        LevelPlay.Init("279d100a5");
     }
 
     public bool PlayRewardedAd(Action OnAddRewardAction)
@@ -52,6 +56,7 @@ public class AdIntegrationManager : MonoSingleton<AdIntegrationManager>
         _rewardedAd.OnAdClicked += RewardedOnAdClickedEvent;
         _rewardedAd.OnAdInfoChanged += RewardedOnAdInfoChangedEvent;
 
+        if(_runTestSuite) LevelPlay.LaunchTestSuite();
         LoadRewardedAd();
     }
 
@@ -63,6 +68,7 @@ public class AdIntegrationManager : MonoSingleton<AdIntegrationManager>
 
     void RewardedOnAdLoadFailedEvent(LevelPlayAdError error) 
     {
+        Debug.LogError("Ad load failed");
         LoadRewardedAd();
     }
 
