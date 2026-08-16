@@ -2,5 +2,5 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
-    private PlayerInventoryData _inventoryData { get { return PlayerDataHandler.Instance.PlayerInventory; } set { PlayerDataHandler.Instance.PlayerInventory = value; } }
+    public PlayerInventoryData InventoryData { get { return PlayerDataHandler.Instance.PlayerInventoryData; } set { PlayerDataHandler.Instance.PlayerInventoryData = value; } }
 }

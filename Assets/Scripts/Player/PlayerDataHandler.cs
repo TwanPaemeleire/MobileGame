@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [System.Serializable]
 public class PlayerDataCollection
@@ -16,9 +18,16 @@ public class PlayerInventoryData
 }
 
 [System.Serializable]
+public enum CurrencyType
+{
+    Coins, 
+    Gems
+}
+
+[System.Serializable]
 public class PlayerCurrencyData
 {
-    public int Coins = 10;
+    public SerializedDictionary<CurrencyType, int> Currencies = new SerializedDictionary<CurrencyType, int>();
 }
 
 public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
@@ -30,7 +39,8 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
     public bool DataLoaded => _dataLoaded;
 
     // Player data parts
-    public PlayerInventoryData PlayerInventory {get { return _playerDataCollection.Inventory; } set { _playerDataCollection.Inventory = value; } }
+    public PlayerInventoryData PlayerInventoryData {get { return _playerDataCollection.Inventory; } set { _playerDataCollection.Inventory = value; } }
+    public PlayerCurrencyData PlayerCurrencyData { get { return _playerDataCollection.Currency; } set { _playerDataCollection.Currency = value; } }
 
     // File saving & loading
     string _saveFileName = "SaveFile.json";
@@ -57,7 +67,6 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
         string saveFileJson = JsonUtility.ToJson(PlayerDataCollection);
         _saveTask = File.WriteAllTextAsync(Application.persistentDataPath + _saveFileName, saveFileJson);
         await SaveTask;
-        Debug.Log(saveFileJson);
         _saveTask = null;
     }
 
