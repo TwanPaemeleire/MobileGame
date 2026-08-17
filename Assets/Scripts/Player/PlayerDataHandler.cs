@@ -53,8 +53,8 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
 
     protected override void Init()
     {
-        RequestSave();
-        //RequestLoad();
+        //RequestSave();
+        RequestLoad();
     }
 
     public async void RequestSave()

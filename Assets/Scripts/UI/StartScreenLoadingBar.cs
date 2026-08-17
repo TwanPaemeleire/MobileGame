@@ -33,6 +33,8 @@ public class StartScreenLoadingBar : MonoBehaviour
             _progressBar.value = progress / targetProgress;
             yield return null;
         }
+
+        SceneHandler.Instance.RequestStartSceneTransition("MainScene");
     }
 
 }
