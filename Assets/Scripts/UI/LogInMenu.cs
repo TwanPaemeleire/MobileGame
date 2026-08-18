@@ -16,6 +16,11 @@ public class LogInMenu : MonoBehaviour
         await UnityServicesHandler.Instance.AuthenticationHandler.StartSignInAttempt(_username.text, _password.text);
     }
 
+    public async void OnRegisterPressed()
+    {
+        await UnityServicesHandler.Instance.AuthenticationHandler.StartSignUpAttempt(_username.text, _password.text);
+    }
+
     private void OnSignInComplete()
     {
         gameObject.SetActive(false);

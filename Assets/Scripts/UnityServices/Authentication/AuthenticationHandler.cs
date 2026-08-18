@@ -12,7 +12,9 @@ public class AuthenticationHandler : MonoBehaviour
     public UnityEvent OnSignOutCompleted = new UnityEvent();
     public UnityEvent OnExpired = new UnityEvent();
 
-    public bool IsSignedIn => AuthenticationService.Instance.IsSignedIn;
+    private bool _isSignedIn = false;
+    public bool IsSignedIn => _isSignedIn;
+    private bool _wasSignUp = false;
 
     public void Initialize()
     {
@@ -22,9 +24,11 @@ public class AuthenticationHandler : MonoBehaviour
         AuthenticationService.Instance.Expired += OnExpire;
     }
 
-    private void OnSignedIn()
+    private async void OnSignedIn()
     {
         Debug.Log($"PlayerID: {AuthenticationService.Instance.PlayerId}");
+        if(_wasSignUp) await UnityServicesHandler.Instance.CloudSaveHandler.SavePlayerDataToCloud();
+        _isSignedIn = true;
         OnSignInCompleted.Invoke();
     }
 
@@ -49,6 +53,7 @@ public class AuthenticationHandler : MonoBehaviour
     {
         try
         {
+            _wasSignUp = true;
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
             Debug.Log("SignUp is successful.");
         }
@@ -70,6 +75,7 @@ public class AuthenticationHandler : MonoBehaviour
     {
         try
         {
+            _wasSignUp = false;
             await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username, password);
             Debug.Log("SignIn is successful.");
         }

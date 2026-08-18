@@ -7,7 +7,6 @@ public class CloudSaveHandler : MonoBehaviour
 {
     public async Task Initialize()
     {
-        //await SavePlayerDataToCloud();
         await LoadPlayerDataFromCloud();
     }
 
