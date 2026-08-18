@@ -1,5 +1,6 @@
 using AYellowpaper.SerializedCollections;
 using System.Collections;
+using Unity.VectorGraphics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -23,6 +24,11 @@ public class SceneHandler : MonoSingleton<SceneHandler>
 
     protected override void Init()
     {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (_scenesTransitionData[sceneName].MusicToStartOnSwitchToThisScene != string.Empty)
+        {
+            SoundHandler.Instance.PlayMusic(_scenesTransitionData[sceneName].MusicToStartOnSwitchToThisScene);
+        }
         _animEventRedirector.RegisterAction("AnimFinished", OnSceneTransitionAnimationFinished);
     }
 
@@ -63,6 +69,11 @@ public class SceneHandler : MonoSingleton<SceneHandler>
             _canvasGroup.interactable = true;
             OnSceneTransitionNewSceneAnimationFinished.Invoke();
             yield break;
+        }
+
+        if (_scenesTransitionData[sceneName].MusicToStartOnSwitchToThisScene != string.Empty)
+        {
+            SoundHandler.Instance.PlayMusic(_scenesTransitionData[sceneName].MusicToStartOnSwitchToThisScene);
         }
 
         _sceneTransitionAnimator.SetTrigger(_scenesTransitionData[sceneName].StartAnimationTriggerName);

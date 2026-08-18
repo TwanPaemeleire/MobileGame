@@ -15,3 +15,4 @@ MonoBehaviour:
   HasStartAnimation: 0
   StartAnimationTriggerName: 
   EndAnimationTriggerName: MainMenuLeave
+  MusicToStartOnSwitchToThisScene: MainMenuMusic

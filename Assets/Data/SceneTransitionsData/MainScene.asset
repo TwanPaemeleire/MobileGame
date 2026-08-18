@@ -15,3 +15,4 @@ MonoBehaviour:
   HasStartAnimation: 1
   StartAnimationTriggerName: MainSceneEnter
   EndAnimationTriggerName: 
+  MusicToStartOnSwitchToThisScene: MainScreenMusic
