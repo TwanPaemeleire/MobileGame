@@ -9,32 +9,15 @@ public class StartScreenLoadingBar : MonoBehaviour
     {
         StartCoroutine(LoadingBar());
     }
-
+    
     private IEnumerator LoadingBar()
-    {
-        float progress = 0.0f;
-        float targetProgress = 3.0f; // Load save file, connect to store, ad init
-
-        while(progress < targetProgress)
+    {  
+        while(UnityServicesHandler.Instance.LoadProgress < 1.0f)
         {
-            progress = 0.0f;
-            if (AdIntegrationHandler.Instance.SdkInitialized)
-            {
-                progress += 1.0f;
-            }
-            if (PlayerDataHandler.Instance.DataLoaded)
-            {
-                progress += 1.0f;
-            }
-            if (IAPHandler.Instance.StoreConnected)
-            {
-                progress += 1.0f;
-            }
-            _progressBar.value = progress / targetProgress;
+            _progressBar.value = UnityServicesHandler.Instance.LoadProgress;
             yield return null;
         }
-
+    
         SceneHandler.Instance.RequestStartSceneTransition("MainScene");
     }
-
 }

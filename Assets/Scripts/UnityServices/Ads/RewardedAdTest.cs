@@ -15,12 +15,12 @@ public class RewardedAdTest : MonoSingleton<RewardedAdTest>
     private void Start()
     {
         SetAddButtonInactive();
-        AdIntegrationHandler.Instance.OnRewardedAdFinishedLoading.AddListener(SetAddButtonActive);
+        UnityServicesHandler.Instance.AdHandler.OnRewardedAdFinishedLoading.AddListener(SetAddButtonActive);
     }
 
     public void OnRewardedAdButtonClicked()
     {
-        AdIntegrationHandler.Instance.PlayRewardedAd(() => AddCoins(20));
+        UnityServicesHandler.Instance.AdHandler.PlayRewardedAd(() => AddCoins(20));
     }
 
     public void AddCoins(int coinsToAdd, bool setInactive = true)

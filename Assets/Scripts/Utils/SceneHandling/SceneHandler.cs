@@ -46,7 +46,7 @@ public class SceneHandler : MonoSingleton<SceneHandler>
     private IEnumerator SceneTransitionCoroutine(string sceneName)
     {
         _canvasGroup.alpha = 1.0f;
-        _canvasGroup.interactable = false;
+        _canvasGroup.blocksRaycasts = true;
         _currentSceneTransitionAnimationFinished = false;
         OnSceneTransitionStart.Invoke();
         _sceneTransitionAnimator.SetTrigger(_scenesTransitionData[SceneManager.GetActiveScene().name].EndAnimationTriggerName);
@@ -66,7 +66,7 @@ public class SceneHandler : MonoSingleton<SceneHandler>
         if(!_scenesTransitionData[sceneName].HasStartAnimation)
         {
             _canvasGroup.alpha = 0.0f;
-            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = false;
             OnSceneTransitionNewSceneAnimationFinished.Invoke();
             yield break;
         }
@@ -79,7 +79,7 @@ public class SceneHandler : MonoSingleton<SceneHandler>
         _sceneTransitionAnimator.SetTrigger(_scenesTransitionData[sceneName].StartAnimationTriggerName);
         yield return new WaitUntil(() => _currentSceneTransitionAnimationFinished);
         _canvasGroup.alpha = 0.0f;
-        _canvasGroup.interactable = true;
+        _canvasGroup.blocksRaycasts = false;
         OnSceneTransitionNewSceneAnimationFinished.Invoke();
     }
 }

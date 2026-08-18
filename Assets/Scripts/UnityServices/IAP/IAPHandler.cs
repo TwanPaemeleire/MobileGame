@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Purchasing;
 
-public class IAPHandler : MonoSingleton<IAPHandler>
+public class IAPHandler : MonoBehaviour
 {
     private StoreController _storeController;
     private bool _storeConnected = false;
@@ -14,17 +14,7 @@ public class IAPHandler : MonoSingleton<IAPHandler>
     public bool StoreConnected => _storeConnected;
     public UnityEvent OnStoreReadyForPurchases = new UnityEvent();
 
-    protected override void Init()
-    {
-        CallInitialize();
-    }
-
-    private async void CallInitialize()
-    {
-        await InitializeStore();
-    }
-
-    private async Task InitializeStore()
+    public async Task Initialize()
     {
         _storeController = UnityIAPServices.StoreController();
         _storeController.OnPurchasePending += OnPurchasePending;

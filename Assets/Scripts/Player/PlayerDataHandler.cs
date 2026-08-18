@@ -7,8 +7,8 @@ using UnityEngine.Rendering;
 [System.Serializable]
 public class PlayerDataCollection
 {
-    public PlayerInventoryData Inventory;
-    public PlayerCurrencyData Currency;
+    public PlayerInventoryData Inventory = new PlayerInventoryData();
+    public PlayerCurrencyData Currency = new PlayerCurrencyData();
 }
 
 [System.Serializable]
@@ -27,19 +27,23 @@ public enum CurrencyType
 [System.Serializable]
 public class PlayerCurrencyData
 {
-    public SerializedDictionary<CurrencyType, int> Currencies = new SerializedDictionary<CurrencyType, int>();
+    public SerializedDictionary<CurrencyType, int> Currencies = new SerializedDictionary<CurrencyType, int>()
+    {
+        { CurrencyType.Coins, 5000},
+        { CurrencyType.Gems, 2}
+    };
 }
 
 public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
 {
     // Player data collection
     private PlayerDataCollection _playerDataCollection = new PlayerDataCollection();
-    public PlayerDataCollection PlayerDataCollection => _playerDataCollection;
+    public PlayerDataCollection PlayerDataCollection { get { return _playerDataCollection; } set { _playerDataCollection = value; } }
     private bool _dataLoaded = false;
-    public bool DataLoaded => _dataLoaded;
+    public bool DataLoaded { get { return _dataLoaded; } set { _dataLoaded = value; } }
 
     // Player data parts
-    public PlayerInventoryData PlayerInventoryData {get { return _playerDataCollection.Inventory; } set { _playerDataCollection.Inventory = value; } }
+    public PlayerInventoryData PlayerInventoryData { get { return _playerDataCollection.Inventory; } set { _playerDataCollection.Inventory = value; } }
     public PlayerCurrencyData PlayerCurrencyData { get { return _playerDataCollection.Currency; } set { _playerDataCollection.Currency = value; } }
 
     // File saving & loading
@@ -54,7 +58,7 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
     protected override void Init()
     {
         //RequestSave();
-        RequestLoad();
+        //RequestLoad();
     }
 
     public async void RequestSave()

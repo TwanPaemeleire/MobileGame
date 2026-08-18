@@ -5,21 +5,21 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class AdIntegrationHandler : MonoSingleton<AdIntegrationHandler>
+public class AdIntegrationHandler : MonoBehaviour
 {
     [SerializeField]
     private bool _runTestSuite = false;
     private string _rewardedAdUnitId = "snm7yvaysvvkfsny";
     private LevelPlayRewardedAd _rewardedAd;
-    private bool _sdkInitialized = false;
+    private bool _SDKInitialized = false;
     private bool _adIsLoading = false;
     private Action _onCurrentRewardedAddFinished = null;
 
     public bool AdIsLoading => _adIsLoading;
-    public bool SdkInitialized => _sdkInitialized;
+    public bool SDKInitialized => _SDKInitialized;
     public UnityEvent OnRewardedAdFinishedLoading = new UnityEvent();
 
-    protected override void Init()
+    public void Initialize()
     {
         if (_runTestSuite) LevelPlay.SetMetaData("is_test_suite", "enable");
         LevelPlay.OnInitSuccess += SdkInitializationCompletedEvent;
@@ -29,7 +29,7 @@ public class AdIntegrationHandler : MonoSingleton<AdIntegrationHandler>
 
     public bool PlayRewardedAd(Action OnAddRewardAction)
     {
-        if (!_sdkInitialized || !_rewardedAd.IsAdReady()) return false;
+        if (!_SDKInitialized || !_rewardedAd.IsAdReady()) return false;
         _onCurrentRewardedAddFinished = OnAddRewardAction;
         _rewardedAd.ShowAd();
         return true;
@@ -42,8 +42,7 @@ public class AdIntegrationHandler : MonoSingleton<AdIntegrationHandler>
 
     void SdkInitializationCompletedEvent(LevelPlayConfiguration configuration)
     {
-        LevelPlay.LaunchTestSuite();
-        _sdkInitialized = true;
+        _SDKInitialized = true;
         _rewardedAd = new LevelPlayRewardedAd(_rewardedAdUnitId);
 
         _rewardedAd.OnAdLoaded += RewardedOnAdLoadedEvent;
