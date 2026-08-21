@@ -16,6 +16,8 @@ public class AuthenticationHandler : MonoBehaviour
     public bool IsSignedIn => _isSignedIn;
     private bool _wasSignUp = false;
 
+    private string _username = string.Empty;
+
     public void Initialize()
     {
         AuthenticationService.Instance.SignedIn += OnSignedIn;
@@ -27,9 +29,24 @@ public class AuthenticationHandler : MonoBehaviour
     private async void OnSignedIn()
     {
         Debug.Log($"PlayerID: {AuthenticationService.Instance.PlayerId}");
-        if(_wasSignUp) await UnityServicesHandler.Instance.CloudSaveHandler.SavePlayerDataToCloud();
-        _isSignedIn = true;
-        OnSignInCompleted.Invoke();
+
+        try
+        {
+            if (_wasSignUp)
+            {
+                await UnityServicesHandler.Instance.CloudSaveHandler.SavePlayerDataToCloud();
+                await AuthenticationService.Instance.UpdatePlayerNameAsync(_username);
+            }
+            Debug.Log($"PlayerName: {AuthenticationService.Instance.PlayerName}");
+
+            _isSignedIn = true;
+            OnSignInCompleted.Invoke();
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            OnSignInFailed.Invoke();
+        }
     }
 
     private void OnSignInFail(RequestFailedException exception)
@@ -37,6 +54,7 @@ public class AuthenticationHandler : MonoBehaviour
         Debug.LogError(exception);
         OnSignInFailed.Invoke();
     }
+
     private void OnSignedOut()
     {
         Debug.Log("Player signed out");
@@ -54,19 +72,12 @@ public class AuthenticationHandler : MonoBehaviour
         try
         {
             _wasSignUp = true;
+            _username = username;
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
-            Debug.Log("SignUp is successful.");
+            Debug.Log("SignUp is successful");
         }
-        catch (AuthenticationException ex)
+        catch (Exception ex)
         {
-            // Compare error code to AuthenticationErrorCodes
-            // Notify the player with the proper error message
-            Debug.LogException(ex);
-        }
-        catch (RequestFailedException ex)
-        {
-            // Compare error code to CommonErrorCodes
-            // Notify the player with the proper error message
             Debug.LogException(ex);
         }
     }
@@ -76,19 +87,12 @@ public class AuthenticationHandler : MonoBehaviour
         try
         {
             _wasSignUp = false;
+            _username = username;
             await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username, password);
-            Debug.Log("SignIn is successful.");
+            Debug.Log("SignIn is successful");
         }
-        catch (AuthenticationException ex)
+        catch (Exception ex)
         {
-            // Compare error code to AuthenticationErrorCodes
-            // Notify the player with the proper error message
-            Debug.LogException(ex);
-        }
-        catch (RequestFailedException ex)
-        {
-            // Compare error code to CommonErrorCodes
-            // Notify the player with the proper error message
             Debug.LogException(ex);
         }
     }
