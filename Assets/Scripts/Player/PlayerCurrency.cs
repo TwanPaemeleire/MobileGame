@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerCurrency : MonoBehaviour
+public class PlayerCurrency : MonoSingleton<PlayerCurrency>
 {
     public PlayerCurrencyData CurrencyData {  get { return PlayerDataHandler.Instance.PlayerCurrencyData; } set { PlayerDataHandler.Instance.PlayerCurrencyData = value; } }
 

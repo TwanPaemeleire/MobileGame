@@ -51,7 +51,7 @@ public class IAPHandler : MonoBehaviour
 
     private void OnPurchaseFailed(FailedOrder order)
     {
-        Debug.LogError("Purchase failed with order:" + order.Info.PurchasedProductInfo[0].productId);
+        Debug.LogWarning("Purchase failed/cancelled with order:" + order.Info.PurchasedProductInfo[0].productId);
     }
 
     private void OnStoreConnected()

@@ -26,6 +26,16 @@ public class AuthenticationHandler : MonoBehaviour
         AuthenticationService.Instance.Expired += OnExpire;
     }
 
+    public string GetPlayerName()
+    {
+        return AuthenticationService.Instance.PlayerName;
+    }
+
+    public string GetPlayerId()
+    {
+        return AuthenticationService.Instance.PlayerId;
+    }
+
     private async void OnSignedIn()
     {
         Debug.Log($"PlayerID: {AuthenticationService.Instance.PlayerId}");

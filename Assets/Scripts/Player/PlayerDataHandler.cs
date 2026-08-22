@@ -29,8 +29,8 @@ public class PlayerCurrencyData
 {
     public SerializedDictionary<CurrencyType, int> Currencies = new SerializedDictionary<CurrencyType, int>()
     {
-        { CurrencyType.Coins, 5000},
-        { CurrencyType.Gems, 2}
+        { CurrencyType.Coins, 0},
+        { CurrencyType.Gems, 0}
     };
 }
 
