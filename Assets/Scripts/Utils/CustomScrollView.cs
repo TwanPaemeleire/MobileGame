@@ -5,11 +5,19 @@ using UnityEngine.UI;
 
 public class CustomScrollView : MonoBehaviour
 {
-    [SerializeField] private float _topMaxExcessScroll;
-    [SerializeField] private float _bottomMaxExcessScroll;
+    [Header("General")]
     [SerializeField] private RectTransform _contentParentTransform;
     [SerializeField] private RectTransform _contentContainerTransform;
+
+    [Header("Excess areas")]
+    [SerializeField] private float _topMaxExcessScroll;
+    [SerializeField] private float _bottomMaxExcessScroll;
     [SerializeField] private float _moveBackTime = 0.5f;
+
+    [Header("Scroll settings")]
+    [SerializeField] private float _scrollSpeedMultiplier = 50.0f;
+    [SerializeField] private float _scrollSpeedDecreaseAmount = 40.0f;
+    [SerializeField] private float _maxTimeToDecreaseScrollInExcessArea = 0.2f;
 
     private float _currentScrollSpeed = 0.0f;
     private int _trackingTouchId = -1;
@@ -53,6 +61,7 @@ public class CustomScrollView : MonoBehaviour
     {
         if (InputHandler.Instance.TouchCount != 1 || !PressIsInScrollView(InputHandler.Instance.GetTouchPosition(id))) return;
         StopAllCoroutines();
+        _currentScrollSpeed = 0.0f;
         _currentlyTrackingTouch = true;
         _trackingTouchId = id;
     }
@@ -64,27 +73,33 @@ public class CustomScrollView : MonoBehaviour
         _trackingTouchId = -1;
 
         StopAllCoroutines();
-        if (_contentParentTransform.anchoredPosition.y > _bottomPosition)
-        {
-            StartCoroutine(MoveBackToNonExcessArea(false));
-        }
-        else if (_contentParentTransform.anchoredPosition.y < _topPosition)
-        {
-            StartCoroutine(MoveBackToNonExcessArea(true));
-        }
+        _currentScrollSpeed = InputHandler.Instance.GetTouchDeltaPosition(id).y * _scrollSpeedMultiplier;
+        StartCoroutine(DecreaseScrollSpeedGradually());
     }
 
     private bool PressIsInScrollView(Vector2 mousePos)
     {
-        return true;
+        return RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), mousePos, null);
     }
 
     private void Update()
     {
-        if (!_currentlyTrackingTouch) return;
+        if (_currentlyTrackingTouch)
+        {
+            float deltaY = InputHandler.Instance.GetTouchDeltaPosition(_trackingTouchId).y;
+            ApplyScroll(deltaY);
+        }
+        else if (!Mathf.Approximately(_currentScrollSpeed, 0.0f))
+        {
+            ApplyScroll(_currentScrollSpeed * Time.deltaTime);
+        }
+        else CheckExcessAreas();
+    }
 
-        float deltaY = InputHandler.Instance.GetTouchDeltaPosition(_trackingTouchId).y;
-        if (deltaY == 0.0f) return;
+    private void ApplyScroll(float deltaY)
+    {
+        if (Mathf.Approximately(deltaY, 0.0f)) return;
+
         float currentY = _contentParentTransform.anchoredPosition.y;
 
         bool topExceeded = currentY < _topPosition;
@@ -114,6 +129,23 @@ public class CustomScrollView : MonoBehaviour
         _contentParentTransform.anchoredPosition += new Vector2(0.0f, deltaY);
     }
 
+    private void CheckExcessAreas()
+    {
+        if (_contentParentTransform.anchoredPosition.y > _bottomPosition)
+        {
+            StartCoroutine(MoveBackToNonExcessArea(false));
+        }
+        else if (_contentParentTransform.anchoredPosition.y < _topPosition)
+        {
+            StartCoroutine(MoveBackToNonExcessArea(true));
+        }
+    }
+
+    private bool IsInExcessArea()
+    {
+        return _contentParentTransform.anchoredPosition.y > _bottomPosition || _contentParentTransform.anchoredPosition.y < _topPosition;
+    }
+
     private IEnumerator MoveBackToNonExcessArea(bool isTop)
     {
         float timer = 0.0f;
@@ -122,11 +154,44 @@ public class CustomScrollView : MonoBehaviour
         while(timer < _moveBackTime)
         {
             timer += Time.deltaTime;
-            float progress = timer / _moveBackTime;
+            float progress = Mathf.Clamp01(timer / _moveBackTime);
             float newYPos = Mathf.SmoothStep(startPos, endPos, progress);
             _contentParentTransform.anchoredPosition = new Vector2(_contentParentTransform.anchoredPosition.x, newYPos);
             yield return null;
         }
         _contentParentTransform.anchoredPosition = new Vector2(_contentParentTransform.anchoredPosition.x, endPos);
+    }
+
+    private IEnumerator DecreaseScrollSpeedGradually()
+    {
+        bool isUp = _currentScrollSpeed < 0.0f;
+        bool isInExcessArea = IsInExcessArea();
+        bool decreasesSpeedInTime = (_scrollSpeedDecreaseAmount * _maxTimeToDecreaseScrollInExcessArea) > Mathf.Abs(_currentScrollSpeed); // Check if the speed would reach 0 in the appropriate time or not
+
+        float amountToDecrease = Mathf.Abs(_currentScrollSpeed);
+        float amountToDecreasePerSecond = amountToDecrease / _maxTimeToDecreaseScrollInExcessArea;
+
+        while (true)
+        {
+            float change = 0.0f;
+            if (decreasesSpeedInTime)
+            {
+                change = _scrollSpeedDecreaseAmount * Time.deltaTime;
+            }
+            else
+            {
+                change = amountToDecreasePerSecond * Time.deltaTime;
+            }
+
+            if (isUp) _currentScrollSpeed += change;
+            else _currentScrollSpeed -= change;
+            if((isUp && _currentScrollSpeed >= 0.0f) || (!isUp && _currentScrollSpeed <= 0.0f))
+            {
+                _currentScrollSpeed = 0.0f;
+                CheckExcessAreas();
+                yield break;
+            }
+            yield return null;
+        }
     }
 }
