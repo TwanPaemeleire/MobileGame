@@ -7,6 +7,7 @@ using UnityEngine;
 public class TransformEntry
 {
     public RectTransform Transform;
+    public BaseScreen Screen;
     [HideInInspector] public Vector2 OriginalPos = Vector2.zero;
     [HideInInspector] public Vector2 CurrentScreenPosition = Vector2.zero;
 }
@@ -57,7 +58,11 @@ public class MainSceneScreenSwitcher : MonoBehaviour
             entry.Value.CurrentScreenPosition = entry.Value.Transform.anchoredPosition;
         }
 
+        _currentTransform.Screen.OnScreenClosedInternal();
+        _currentTransform.Screen.OnScreenClosed.Invoke();
         _currentTransform = _screenTransforms[newScreen];
+        _currentTransform.Screen.OnScreenOpenedInternal();
+        _currentTransform.Screen.OnScreenOpened.Invoke();
         _isSwitchingScreens = false;
     }
 }

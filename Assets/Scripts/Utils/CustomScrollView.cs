@@ -28,7 +28,7 @@ public class CustomScrollView : MonoBehaviour
     private float _topPosition = 0.0f;
     private float _bottomPosition = 0.0f;
 
-    private void OnEnable()
+    public void InitializeScrollView()
     {
         RectTransform bottomElementTransform = _contentContainerTransform.GetChild(0).GetComponent<RectTransform>();
         int childCount = _contentContainerTransform.childCount;
