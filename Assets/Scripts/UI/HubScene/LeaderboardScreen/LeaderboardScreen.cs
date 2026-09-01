@@ -127,5 +127,6 @@ public class LeaderboardScreen : BaseScreen
             entry.CanvasGroup.alpha = 0.0f;
             entry.VisualsTransform.anchoredPosition = new Vector2(entry.VisualsTransform.anchoredPosition.x, 0.0f);
         }
+        _scrollViewTransform.GetComponent<CustomScrollView>().ResetScrollView();
     }
 }

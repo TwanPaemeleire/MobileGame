@@ -44,6 +44,8 @@ public class UnityServicesHandler : MonoSingleton<UnityServicesHandler>
 
     private IEnumerator InitializationCoroutine()
     {
+        // NOTE TO MAKE LOADING MORE CLEAR, EVENT FOR WHEN EACH STEP OF THE PROGRESS IS DONE THAT PASSES BOOL ABOUT ITS SUCCESS OR FAILURE, THE USE THIS TO DISPLAY IN UI
+
         // Can be used to progress a loading bar or something in here
         float targetAmount = 5.0f;
         float loadProgress = 0.0f;

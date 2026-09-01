@@ -6,11 +6,14 @@ using Unity.Services.Core;
 using Unity.Services.Leaderboards;
 using Unity.Services.Leaderboards.Models;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class LeaderboardHandler : MonoBehaviour
 {
+    public UnityEvent OnSuccesfullInit = new UnityEvent();
     public void Initialize()
     {
+        OnSuccesfullInit.Invoke();
     }
 
     public async Task<LeaderboardEntry> SubmitScore(string leaderboardName, int score)

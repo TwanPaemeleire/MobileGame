@@ -9,15 +9,18 @@ public class StartScreenLoadingBar : MonoBehaviour
     {
         StartCoroutine(LoadingBar());
     }
+
+    public void OnContinueButtonClicked()
+    {
+        SceneHandler.Instance.RequestStartSceneTransition("MainScene");
+    }
     
     private IEnumerator LoadingBar()
-    {  
-        while(UnityServicesHandler.Instance.LoadProgress < 1.0f)
+    {
+        while (UnityServicesHandler.Instance.LoadProgress < 1.0f)
         {
             _progressBar.value = UnityServicesHandler.Instance.LoadProgress;
             yield return null;
         }
-    
-        SceneHandler.Instance.RequestStartSceneTransition("MainScene");
     }
 }

@@ -146,6 +146,12 @@ public class CustomScrollView : MonoBehaviour
         return _contentParentTransform.anchoredPosition.y > _bottomPosition || _contentParentTransform.anchoredPosition.y < _topPosition;
     }
 
+    public void ResetScrollView()
+    {
+        StopAllCoroutines();
+        _contentParentTransform.anchoredPosition = new Vector2(_contentParentTransform.anchoredPosition.x, 0.0f);
+    }
+
     private IEnumerator MoveBackToNonExcessArea(bool isTop)
     {
         float timer = 0.0f;

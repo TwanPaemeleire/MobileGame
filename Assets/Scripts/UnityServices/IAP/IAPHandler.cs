@@ -12,7 +12,7 @@ public class IAPHandler : MonoBehaviour
     private bool _storeConnected = false;
     private Func<PendingOrder, bool> _currentOrderPendingCallback;
     public bool StoreConnected => _storeConnected;
-    public UnityEvent OnStoreReadyForPurchases = new UnityEvent();
+    public UnityEvent OnSuccesfullInit = new UnityEvent();
 
     public async Task Initialize()
     {
@@ -36,7 +36,7 @@ public class IAPHandler : MonoBehaviour
             _storeController.FetchProducts(products);
         });
 
-        OnStoreReadyForPurchases.Invoke();
+        OnSuccesfullInit.Invoke();
     }
 
     private void OnPurchaseConfirmed(Order order)

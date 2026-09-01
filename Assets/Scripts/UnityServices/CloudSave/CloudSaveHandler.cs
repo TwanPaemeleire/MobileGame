@@ -2,12 +2,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Services.CloudSave;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CloudSaveHandler : MonoBehaviour
 {
+    public UnityEvent OnSuccessfullInit = new UnityEvent();
     public async Task Initialize()
     {
         await LoadPlayerDataFromCloud();
+        OnSuccessfullInit.Invoke();
     }
 
     public async Task SavePlayerDataToCloud()

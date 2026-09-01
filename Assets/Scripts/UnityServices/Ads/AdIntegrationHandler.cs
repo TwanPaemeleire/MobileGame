@@ -17,6 +17,7 @@ public class AdIntegrationHandler : MonoBehaviour
 
     public bool AdIsLoading => _adIsLoading;
     public bool SDKInitialized => _SDKInitialized;
+    public UnityEvent OnSuccesfullInit = new UnityEvent();
     public UnityEvent OnRewardedAdFinishedLoading = new UnityEvent();
 
     public void Initialize()
@@ -56,6 +57,7 @@ public class AdIntegrationHandler : MonoBehaviour
         _rewardedAd.OnAdInfoChanged += RewardedOnAdInfoChangedEvent;
 
         if(_runTestSuite) LevelPlay.LaunchTestSuite();
+        OnSuccesfullInit.Invoke();
         LoadRewardedAd();
     }
 
@@ -68,7 +70,6 @@ public class AdIntegrationHandler : MonoBehaviour
     void RewardedOnAdLoadFailedEvent(LevelPlayAdError error) 
     {
         Debug.LogError("Ad load failed");
-        LoadRewardedAd();
     }
 
     void RewardedOnAdDisplayedEvent(LevelPlayAdInfo adInfo) 
