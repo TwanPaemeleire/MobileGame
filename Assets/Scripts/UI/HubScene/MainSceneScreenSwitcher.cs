@@ -8,6 +8,7 @@ public class TransformEntry
 {
     public RectTransform Transform;
     public BaseScreen Screen;
+    public RectTransform BottomIconTransform;
     [HideInInspector] public Vector2 OriginalPos = Vector2.zero;
     [HideInInspector] public Vector2 CurrentScreenPosition = Vector2.zero;
 }
@@ -16,11 +17,15 @@ public class MainSceneScreenSwitcher : MonoBehaviour
 {
     [SerializeField] private SerializedDictionary<string, TransformEntry> _screenTransforms;
     [SerializeField] private float _transitionTime = 0.5f;
-    [SerializeField] private TransformEntry _currentTransform;
+    [SerializeField] private string _startTransform;
+    [SerializeField] private RectTransform _selectedScreenIndicator;
     bool _isSwitchingScreens = false;
+
+    private TransformEntry _currentTransform = null;
 
     private void Start()
     {
+        _currentTransform = _screenTransforms[_startTransform];
         foreach (var entry in _screenTransforms)
         {
             entry.Value.OriginalPos = entry.Value.Transform.anchoredPosition;
@@ -30,7 +35,7 @@ public class MainSceneScreenSwitcher : MonoBehaviour
 
     public void StartScreenSwitch(string newScreen)
     {
-        if (_isSwitchingScreens || _currentTransform == _screenTransforms[newScreen]) return;
+        if (_isSwitchingScreens || !_screenTransforms.ContainsKey(newScreen) || _currentTransform == _screenTransforms[newScreen]) return;
         StartCoroutine(SwitchScreens(newScreen));
     }
 
@@ -40,11 +45,15 @@ public class MainSceneScreenSwitcher : MonoBehaviour
         float timer = 0.0f;
         Vector2 posChange = _currentTransform.CurrentScreenPosition - _screenTransforms[newScreen].CurrentScreenPosition;
 
+        float inidcatorStartX = _selectedScreenIndicator.anchoredPosition.x;
+        float indicatorTargetX = _screenTransforms[newScreen].BottomIconTransform.anchoredPosition.x;
+
         while (timer < _transitionTime)
         {
             timer += Time.deltaTime;
             float progress = timer / _transitionTime;
             float smoothProgress = Mathf.SmoothStep(0.0f, 1.0f, progress);
+            _selectedScreenIndicator.anchoredPosition = new Vector2(Mathf.SmoothStep(inidcatorStartX, indicatorTargetX, progress), _selectedScreenIndicator.anchoredPosition.y);
             foreach (var entry in _screenTransforms)
             {
                 entry.Value.Transform.anchoredPosition = Vector2.Lerp(entry.Value.CurrentScreenPosition, entry.Value.CurrentScreenPosition + posChange, smoothProgress);
@@ -57,6 +66,7 @@ public class MainSceneScreenSwitcher : MonoBehaviour
             entry.Value.Transform.anchoredPosition = entry.Value.CurrentScreenPosition + posChange;
             entry.Value.CurrentScreenPosition = entry.Value.Transform.anchoredPosition;
         }
+        _selectedScreenIndicator.anchoredPosition = new Vector2(indicatorTargetX, _selectedScreenIndicator.anchoredPosition.y);
 
         _currentTransform.Screen.OnScreenClosedInternal();
         _currentTransform.Screen.OnScreenClosed.Invoke();
