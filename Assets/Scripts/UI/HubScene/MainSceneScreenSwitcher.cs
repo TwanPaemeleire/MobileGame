@@ -9,6 +9,7 @@ public class TransformEntry
     public RectTransform Transform;
     public BaseScreen Screen;
     public RectTransform BottomIconTransform;
+    public CanvasGroup CanvasGroup;
     [HideInInspector] public Vector2 OriginalPos = Vector2.zero;
     [HideInInspector] public Vector2 CurrentScreenPosition = Vector2.zero;
 }
@@ -28,9 +29,13 @@ public class MainSceneScreenSwitcher : MonoBehaviour
         _currentTransform = _screenTransforms[_startTransform];
         foreach (var entry in _screenTransforms)
         {
+            entry.Value.CanvasGroup.blocksRaycasts = false;
+            entry.Value.CanvasGroup.interactable = false;
             entry.Value.OriginalPos = entry.Value.Transform.anchoredPosition;
             entry.Value.CurrentScreenPosition = entry.Value.OriginalPos;
         }
+        _currentTransform.CanvasGroup.interactable = true;
+        _currentTransform.CanvasGroup.blocksRaycasts = true;
     }
 
     public void StartScreenSwitch(string newScreen)
@@ -47,6 +52,9 @@ public class MainSceneScreenSwitcher : MonoBehaviour
 
         float inidcatorStartX = _selectedScreenIndicator.anchoredPosition.x;
         float indicatorTargetX = _screenTransforms[newScreen].BottomIconTransform.anchoredPosition.x;
+
+        _currentTransform.CanvasGroup.interactable = false;
+        _currentTransform.CanvasGroup.blocksRaycasts = false;
 
         while (timer < _transitionTime)
         {
@@ -71,6 +79,8 @@ public class MainSceneScreenSwitcher : MonoBehaviour
         _currentTransform.Screen.OnScreenClosedInternal();
         _currentTransform.Screen.OnScreenClosed.Invoke();
         _currentTransform = _screenTransforms[newScreen];
+        _currentTransform.CanvasGroup.interactable = true;
+        _currentTransform.CanvasGroup.blocksRaycasts = true;
         _currentTransform.Screen.OnScreenOpenedInternal();
         _currentTransform.Screen.OnScreenOpened.Invoke();
         _isSwitchingScreens = false;

@@ -17,6 +17,7 @@ public class AuthenticationHandler : MonoBehaviour
     private bool _wasSignUp = false;
 
     private string _username = string.Empty;
+    private string _cachedPlayerName = string.Empty;
 
     public void Initialize()
     {
@@ -28,7 +29,12 @@ public class AuthenticationHandler : MonoBehaviour
 
     public string GetPlayerName()
     {
-        return AuthenticationService.Instance.PlayerName;
+        return _cachedPlayerName;
+    }
+
+    public string GetPlayerNameWithoutId()
+    {
+        return GetPlayerName().Substring(0, GetPlayerName().LastIndexOf("#"));
     }
 
     public string GetPlayerId()
@@ -47,7 +53,8 @@ public class AuthenticationHandler : MonoBehaviour
                 await UnityServicesHandler.Instance.CloudSaveHandler.SavePlayerDataToCloud();
                 await AuthenticationService.Instance.UpdatePlayerNameAsync(_username);
             }
-            Debug.Log($"PlayerName: {AuthenticationService.Instance.PlayerName}");
+            _cachedPlayerName = await AuthenticationService.Instance.GetPlayerNameAsync();
+            Debug.Log($"PlayerName: {_cachedPlayerName}");
 
             _isSignedIn = true;
             OnSignInCompleted.Invoke();

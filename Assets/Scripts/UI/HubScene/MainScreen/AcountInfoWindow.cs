@@ -1,15 +1,13 @@
 using TMPro;
 using UnityEngine;
 
-public class AccountMenuScreen : MonoBehaviour
+public class AcountInfoWindow : PopUpWindow
 {
     [SerializeField] private TextMeshProUGUI _nameText;
     [SerializeField] private TextMeshProUGUI _playerIdText;
-    [SerializeField] private TextMeshProUGUI _levelText;
-
-    private void OnEnable()
+    protected override void OnWindowOpenedInternal()
     {
-        _nameText.text = UnityServicesHandler.Instance.AuthenticationHandler.GetPlayerName();
+        _nameText.text = UnityServicesHandler.Instance.AuthenticationHandler.GetPlayerNameWithoutId();
         _playerIdText.text = UnityServicesHandler.Instance.AuthenticationHandler.GetPlayerId();
     }
 }

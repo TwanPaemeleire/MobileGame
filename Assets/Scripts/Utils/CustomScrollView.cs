@@ -59,7 +59,7 @@ public class CustomScrollView : MonoBehaviour
 
     private void OnTouchStarted(int id)
     {
-        if (InputHandler.Instance.TouchCount != 1 || !PressIsInScrollView(InputHandler.Instance.GetTouchPosition(id))) return;
+        if (InputHandler.Instance.TouchCount != 1 || !InputHandler.Instance.IsTouchInsideRectTransform(id, GetComponent<RectTransform>())) return;
         StopAllCoroutines();
         _currentScrollSpeed = 0.0f;
         _currentlyTrackingTouch = true;
@@ -75,11 +75,6 @@ public class CustomScrollView : MonoBehaviour
         StopAllCoroutines();
         _currentScrollSpeed = InputHandler.Instance.GetTouchDeltaPosition(id).y * _scrollSpeedMultiplier;
         StartCoroutine(DecreaseScrollSpeedGradually());
-    }
-
-    private bool PressIsInScrollView(Vector2 mousePos)
-    {
-        return RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), mousePos, null);
     }
 
     private void Update()

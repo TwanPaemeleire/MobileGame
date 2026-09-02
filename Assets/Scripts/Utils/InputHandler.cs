@@ -39,4 +39,10 @@ public class InputHandler : MonoSingleton<InputHandler>
     {
         return Touchscreen.current.touches.Where((TouchControl touch) => touch.touchId.value == touchId).FirstOrDefault().position.value;
     }
+
+    public bool IsTouchInsideRectTransform(int touchId, RectTransform rectTransform)
+    {
+        Vector2 touchPosition = GetTouchPosition(touchId);
+        return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, touchPosition, null);
+    }
 }
