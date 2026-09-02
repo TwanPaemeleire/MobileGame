@@ -84,7 +84,7 @@ public class AuthenticationHandler : MonoBehaviour
         OnExpired.Invoke();
     }
 
-    public async Task StartSignUpAttempt(string username, string password)
+    public async Task<bool> StartSignUpAttempt(string username, string password)
     {
         try
         {
@@ -92,10 +92,12 @@ public class AuthenticationHandler : MonoBehaviour
             _username = username;
             await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(username, password);
             Debug.Log("SignUp is successful");
+            return true;
         }
         catch (Exception ex)
         {
             Debug.LogException(ex);
+            return false;
         }
     }
 
@@ -112,5 +114,23 @@ public class AuthenticationHandler : MonoBehaviour
         {
             Debug.LogException(ex);
         }
+    }
+
+    public async Task StartDeletAccountAttempt()
+    {
+        try
+        {
+            await AuthenticationService.Instance.DeleteAccountAsync();
+            Debug.Log("Account deletion is successful");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
+    }
+
+    public void SignOut()
+    {
+        AuthenticationService.Instance.SignOut();
     }
 }
