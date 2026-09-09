@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerCurrency : MonoSingleton<PlayerCurrency>
+public class PlayerCurrency : MonoBehaviour
 {
-    public PlayerCurrencyData CurrencyData {  get { return PlayerDataHandler.Instance.PlayerCurrencyData; } set { PlayerDataHandler.Instance.PlayerCurrencyData = value; } }
+    public PlayerCurrencyData CurrencyData => PlayerDataHandler.Instance.PlayerCurrencyData;
 
     public UnityEvent<CurrencyType, int, int> OnCurrencyGained = new UnityEvent<CurrencyType, int, int>(); // Type, old amount, new amount
     public UnityEvent<CurrencyType, int, int> OnCurrencyLost = new UnityEvent<CurrencyType, int, int>(); // Type, old amount, new amount

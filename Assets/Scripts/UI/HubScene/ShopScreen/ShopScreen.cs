@@ -36,7 +36,7 @@ public class ShopScreen : BaseScreen
     private bool OnPurchasePending(PendingOrder order)
     {
         if (_processingItemData == null) return false;
-        PlayerCurrency.Instance.AddCurrency(_processingItemData.Amount, CurrencyType.Coins);
+        PlayerDataHandler.Instance.PlayerCurrency.AddCurrency(_processingItemData.Amount, CurrencyType.Coins);
         return true;
     }
 

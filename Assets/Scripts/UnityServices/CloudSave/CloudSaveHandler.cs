@@ -34,14 +34,12 @@ public class CloudSaveHandler : MonoBehaviour
         if (playerData.TryGetValue("InventoryData", out var firstKey))
         {
             dataJson = firstKey.Value.GetAs<string>();
-            Debug.Log($"InventoryData value: {dataJson}");
             PlayerDataHandler.Instance.PlayerDataCollection.Inventory = JsonUtility.FromJson<PlayerInventoryData>(dataJson);
         }
 
         if (playerData.TryGetValue("CurrencyData", out var secondKey))
         {
             dataJson = secondKey.Value.GetAs<string>();
-            Debug.Log($"CurrencyData value: {dataJson}");
             PlayerDataHandler.Instance.PlayerDataCollection.Currency = JsonUtility.FromJson<PlayerCurrencyData>(dataJson);
         }
 

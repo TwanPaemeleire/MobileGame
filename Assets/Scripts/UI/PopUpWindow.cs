@@ -22,7 +22,7 @@ public class PopUpWindow : MonoBehaviour
         InputHandler.Instance.OnTouchStarted.AddListener(OnClickStarted);
         OnWindowOpenedInternal();
         gameObject.SetActive(true);
-        StartCoroutine(AnimateWindowPopUp());
+        if(_doPopUpAnimation) StartCoroutine(AnimateWindowPopUp());
         OnWindowOpened.Invoke();
     }
 

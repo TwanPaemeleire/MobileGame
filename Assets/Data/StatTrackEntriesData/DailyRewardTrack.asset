@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdd73077aad3c32449a28fc5c91feb23, type: 3}
+  m_Name: DailyRewardTrack
+  m_EditorClassIdentifier: Assembly-CSharp::RewardTrackData
+  QuestEntries:
+  - {fileID: 11400000, guid: 6dd37de205361b244bdef00e03b8fc3a, type: 2}
+  - {fileID: 11400000, guid: 9dd084aae6921e640a12df48f295de40, type: 2}
+  - {fileID: 11400000, guid: 853dd97bb62736844b21258e929be253, type: 2}
+  - {fileID: 11400000, guid: 9da4be6f589d05143a9d00a32bdc2a87, type: 2}
+  - {fileID: 11400000, guid: ce75b5b3703395c43a1999e24d3ff3cf, type: 2}
+  - {fileID: 11400000, guid: b2f9e73b47a4aa24db9e6e69a53f5dc6, type: 2}
+  - {fileID: 11400000, guid: 018e5edce7a4c9542b6ebebd5d98eee4, type: 2}
+  QuestProgresRewardEntries:
+    _serializedList: []

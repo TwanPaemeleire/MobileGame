@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "SceneTransitionData", menuName = "CustomSOs/SceneTransitionData", order = 1)]
+[CreateAssetMenu(fileName = "SceneTransitionData", menuName = "CustomSOs/SceneTransitionData")]
 public class SceneTransitionData : ScriptableObject
 {
     public bool HasStartAnimation = true;
