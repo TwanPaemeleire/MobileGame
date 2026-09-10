@@ -1209,6 +1209,7 @@ MonoBehaviour:
   _playerStatistics: {fileID: 825886483}
   _playerInventory: {fileID: 1876737962}
   _playerCurrency: {fileID: 156160843}
+  _playerQuests: {fileID: 1282874569}
 --- !u!4 &680741764
 Transform:
   m_ObjectHideFlags: 0
@@ -1225,6 +1226,7 @@ Transform:
   - {fileID: 825886484}
   - {fileID: 1876737963}
   - {fileID: 156160844}
+  - {fileID: 1282874570}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &712236981
@@ -2724,6 +2726,50 @@ RectTransform:
   m_AnchoredPosition: {x: -5, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1282874568
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1282874570}
+  - component: {fileID: 1282874569}
+  m_Layer: 0
+  m_Name: PlayerQuests
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1282874569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282874568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce3b2caa27068fb48a254a311c10c664, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerQuests
+--- !u!4 &1282874570
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282874568}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 680741764}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1314068119
 GameObject:
   m_ObjectHideFlags: 0
@@ -4783,6 +4829,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a19de2938dcf454ebc261f4a91693ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimedResetHandler
+  OnDailyReset:
+    m_PersistentCalls:
+      m_Calls: []
+  OnWeeklyReset:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &2010877920
 Transform:
   m_ObjectHideFlags: 0

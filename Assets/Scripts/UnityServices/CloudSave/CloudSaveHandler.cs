@@ -20,7 +20,8 @@ public class CloudSaveHandler : MonoBehaviour
             {"InventoryData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerInventoryData)},
             {"CurrencyData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerCurrencyData)},
             {"StatisticsData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerStatisticsData)},
-            {"TimedResetData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerTimedResetData)}
+            {"TimedResetData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerTimedResetData)},
+            {"QuestsData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerQuestsData) }
         };
         await CloudSaveService.Instance.Data.Player.SaveAsync(playerData);
     }
@@ -29,7 +30,7 @@ public class CloudSaveHandler : MonoBehaviour
     {
         var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> 
         {
-          "InventoryData", "CurrencyData", "StatisticsData", "TimedResetData"
+          "InventoryData", "CurrencyData", "StatisticsData", "TimedResetData", "QuestsData"
         });
 
         string dataJson = "";
@@ -49,6 +50,12 @@ public class CloudSaveHandler : MonoBehaviour
         {
             dataJson = thirdKey.Value.GetAs<string>();
             PlayerDataHandler.Instance.PlayerDataCollection.Statistics = JsonUtility.FromJson<PlayerStatisticsData>(dataJson);
+        }
+
+        if(playerData.TryGetValue("QuestsData", out var fourthKey))
+        {
+            dataJson = fourthKey.Value.GetAs<string>();
+            PlayerDataHandler.Instance.PlayerDataCollection.Quests = JsonUtility.FromJson<PlayerQuestData>(dataJson);
         }
 
         PlayerDataHandler.Instance.DataLoaded = true;

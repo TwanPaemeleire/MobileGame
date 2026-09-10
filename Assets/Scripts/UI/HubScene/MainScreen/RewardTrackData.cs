@@ -15,4 +15,5 @@ public class RewardTrackData : ScriptableObject
 {
     public List<StatTrackEntryData> QuestEntries = new List<StatTrackEntryData>();
     public SerializedDictionary<int, RewardInfo> QuestProgresRewardEntries = new SerializedDictionary<int, RewardInfo>();
+    public TimedDataType TimeScope;
 }

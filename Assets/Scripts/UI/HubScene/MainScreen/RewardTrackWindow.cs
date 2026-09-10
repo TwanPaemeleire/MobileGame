@@ -13,12 +13,22 @@ public class RewardTrackWindow : PopUpWindow
 
     protected override void OnWindowOpenedInternal()
     {
+        List<StatTrackUIElement> claimedElements = new List<StatTrackUIElement>();
         foreach (var quest in _rewardTrackData.QuestEntries)
         {
             GameObject questEntryObject = Instantiate(_questEntryPrefab, _questContainerTransform);
             var questEntryComponent = questEntryObject.GetComponent<StatTrackUIElement>();
             questEntryComponent.CheckValuesAndRefreshVisuals(quest);
             _questEntryComponents.Add(questEntryComponent);
+            if (PlayerDataHandler.Instance.PlayerQuests.IsQuestCompleted(_rewardTrackData.TimeScope, quest.name))
+            {
+                claimedElements.Add(questEntryComponent);
+            }
+        }
+
+        foreach(var claimedElement in claimedElements)
+        {
+            claimedElement.MarkAsClaimed();
         }
 
         PlayerDataHandler.Instance.PlayerStatistics.OnStatIncreased.AddListener(OnStatChanged);
@@ -30,6 +40,7 @@ public class RewardTrackWindow : PopUpWindow
         {
             Destroy(questEntry.gameObject);
         }
+        _questEntryComponents.Clear();
     }
 
     private void OnStatChanged(string statName, int newValue, TimedDataType type)

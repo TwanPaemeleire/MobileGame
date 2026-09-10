@@ -4,6 +4,6 @@ public class AdTestButton : MonoBehaviour
 {
    public void RequestStartAd()
     {
-        UnityServicesHandler.Instance.AdHandler.PlayRewardedAd(() => PlayerDataHandler.Instance.PlayerStatistics.IncreaseStatValue("AdsWatched", 1));
+        UnityServicesHandler.Instance.AdHandler.PlayRewardedAd(() => PlayerDataHandler.Instance.PlayerStatistics.IncreaseStatValueAllTimeScopes("AdsWatched", 1));
     }
 }

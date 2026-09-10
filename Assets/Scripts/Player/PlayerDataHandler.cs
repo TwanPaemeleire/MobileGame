@@ -12,12 +12,19 @@ public class PlayerDataCollection
     public PlayerInventoryData Inventory = new PlayerInventoryData();
     public PlayerCurrencyData Currency = new PlayerCurrencyData();
     public PlayerTimedResetData TimedReset = new PlayerTimedResetData();
+    public PlayerQuestData Quests = new PlayerQuestData();
 }
 
 [System.Serializable]
 public class PlayerStatisticsData
 {
     public SerializedDictionary<TimedDataType, SerializedDictionary<string, int>> Statistics = new SerializedDictionary<TimedDataType, SerializedDictionary<string, int>>();
+}
+
+[System.Serializable]
+public class PlayerQuestData
+{
+    public SerializedDictionary<TimedDataType, List<string>> QuestsData = new SerializedDictionary<TimedDataType, List<string>>();
 }
 
 [System.Serializable]
@@ -64,10 +71,12 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
     [SerializeField] private PlayerStatistics _playerStatistics;
     [SerializeField] private PlayerInventory _playerInventory;
     [SerializeField] private PlayerCurrency _playerCurrency;
+    [SerializeField] private PlayerQuests _playerQuests;
 
     public PlayerStatistics PlayerStatistics => _playerStatistics;
     public PlayerInventory PlayerInventory => _playerInventory;
     public PlayerCurrency PlayerCurrency => _playerCurrency;
+    public PlayerQuests PlayerQuests => _playerQuests;
 
     // Player data collection
     private PlayerDataCollection _playerDataCollection = new PlayerDataCollection();
@@ -80,4 +89,5 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
     public PlayerCurrencyData PlayerCurrencyData { get { return _playerDataCollection.Currency; } set { _playerDataCollection.Currency = value; } }
     public PlayerStatisticsData PlayerStatisticsData { get { return _playerDataCollection.Statistics; } set { _playerDataCollection.Statistics = value; } }
     public PlayerTimedResetData PlayerTimedResetData { get { return _playerDataCollection.TimedReset; } set { _playerDataCollection.TimedReset = value; } }
+    public PlayerQuestData PlayerQuestsData => _playerDataCollection.Quests;// { get { return _playerDataCollection.Quests; } set { _playerDataCollection.Quests = value; } }
 }

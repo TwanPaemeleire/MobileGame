@@ -27,6 +27,11 @@ public class StatTrackUIElement : MonoBehaviour
         {
             _claimButton.interactable = true;
         }
+
+        if(PlayerDataHandler.Instance.PlayerQuests.IsQuestCompleted(TimedDataType.Daily, _entry.name))
+        {
+            MarkAsClaimed();
+        }
     }
 
     public void OnValueChanged(string statName, int newValue)
@@ -45,6 +50,7 @@ public class StatTrackUIElement : MonoBehaviour
     {
         MarkAsClaimed();
         PlayerDataHandler.Instance.PlayerCurrency.AddCurrency(_entry.Reward.Amount, _entry.Reward.CurrencyType);
+        PlayerDataHandler.Instance.PlayerQuests.AddCompletedQuest(TimedDataType.Daily, _entry.name);
     }
 
     public void MarkAsClaimed()
