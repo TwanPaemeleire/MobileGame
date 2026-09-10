@@ -1,9 +1,9 @@
+using AYellowpaper.SerializedCollections;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 [System.Serializable]
 public class PlayerDataCollection
@@ -11,14 +11,13 @@ public class PlayerDataCollection
     public PlayerStatisticsData Statistics = new PlayerStatisticsData();
     public PlayerInventoryData Inventory = new PlayerInventoryData();
     public PlayerCurrencyData Currency = new PlayerCurrencyData();
+    public PlayerTimedResetData TimedReset = new PlayerTimedResetData();
 }
 
 [System.Serializable]
 public class PlayerStatisticsData
 {
-    public SerializedDictionary<string, int> DailyStatistics = new SerializedDictionary<string, int>();
-    public SerializedDictionary<string, int> WeeklyStatistics = new SerializedDictionary<string, int>();
-    public SerializedDictionary<string, int> LifetimeStatistics = new SerializedDictionary<string, int>();
+    public SerializedDictionary<TimedDataType, SerializedDictionary<string, int>> Statistics = new SerializedDictionary<TimedDataType, SerializedDictionary<string, int>>();
 }
 
 [System.Serializable]
@@ -44,6 +43,21 @@ public class PlayerCurrencyData
     };
 }
 
+[System.Serializable]
+public enum TimedDataType
+{
+    Daily,
+    Weekly,
+    Lifetime
+}
+
+[System.Serializable]
+public class PlayerTimedResetData
+{
+    public int LastDailyResetDay = -1;
+    public int LastWeeklyResetWeek = -1;
+}
+
 public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
 {
     // Player data handlers
@@ -65,4 +79,5 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
     public PlayerInventoryData PlayerInventoryData { get { return _playerDataCollection.Inventory; } set { _playerDataCollection.Inventory = value; } }
     public PlayerCurrencyData PlayerCurrencyData { get { return _playerDataCollection.Currency; } set { _playerDataCollection.Currency = value; } }
     public PlayerStatisticsData PlayerStatisticsData { get { return _playerDataCollection.Statistics; } set { _playerDataCollection.Statistics = value; } }
+    public PlayerTimedResetData PlayerTimedResetData { get { return _playerDataCollection.TimedReset; } set { _playerDataCollection.TimedReset = value; } }
 }

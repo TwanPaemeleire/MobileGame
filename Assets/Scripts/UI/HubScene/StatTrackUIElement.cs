@@ -11,12 +11,13 @@ public class StatTrackUIElement : MonoBehaviour
     [SerializeField] private ProgressBar _progressBar;
     [SerializeField] private CurrencyInfoCollection _currencyInfoCollection;
     private StatTrackEntryData _entry;
+    public StatTrackEntryData StatTrackEntryData => _entry;
 
     public void CheckValuesAndRefreshVisuals(StatTrackEntryData entry)
     {
         _entry = entry;
         _descriptionText.text = _entry.Description;
-        int currentValue = PlayerDataHandler.Instance.PlayerStatistics.GetDailyStatValue(_entry.StatName);
+        int currentValue = PlayerDataHandler.Instance.PlayerStatistics.GetStatValue(_entry.StatName, TimedDataType.Daily);
         _progressBar.InitializeProgressBar(currentValue, _entry.TargetAmount);
         _regularRewardElement.AmountText.text = _entry.Reward.Amount.ToString();
         _regularRewardElement.IconImage.sprite = _currencyInfoCollection.CurrencyInfoDictionary[_entry.Reward.CurrencyType];
@@ -42,6 +43,15 @@ public class StatTrackUIElement : MonoBehaviour
 
     public void ClaimReward()
     {
-        gameObject.SetActive(false);
+        MarkAsClaimed();
+        PlayerDataHandler.Instance.PlayerCurrency.AddCurrency(_entry.Reward.Amount, _entry.Reward.CurrencyType);
+    }
+
+    public void MarkAsClaimed()
+    {
+        Transform parent = transform.parent;
+        transform.SetParent(null);
+        transform.SetParent(parent);
+        _claimButton.interactable = false;
     }
 }

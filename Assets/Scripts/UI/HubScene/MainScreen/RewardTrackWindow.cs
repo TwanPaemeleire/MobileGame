@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class RewardTrackWindow : PopUpWindow
 {
@@ -8,15 +9,37 @@ public class RewardTrackWindow : PopUpWindow
 
     private bool _haveMadeQuests = false;
 
+    private List<StatTrackUIElement> _questEntryComponents = new List<StatTrackUIElement>();
+
     protected override void OnWindowOpenedInternal()
     {
-        if (_haveMadeQuests) return;
-        _haveMadeQuests = true;
         foreach (var quest in _rewardTrackData.QuestEntries)
         {
             GameObject questEntryObject = Instantiate(_questEntryPrefab, _questContainerTransform);
             var questEntryComponent = questEntryObject.GetComponent<StatTrackUIElement>();
             questEntryComponent.CheckValuesAndRefreshVisuals(quest);
+            _questEntryComponents.Add(questEntryComponent);
+        }
+
+        PlayerDataHandler.Instance.PlayerStatistics.OnStatIncreased.AddListener(OnStatChanged);
+    }
+
+    protected override void OnWindowClosedInternal()
+    {
+        foreach (var questEntry in _questEntryComponents)
+        {
+            Destroy(questEntry.gameObject);
+        }
+    }
+
+    private void OnStatChanged(string statName, int newValue, TimedDataType type)
+    {
+        foreach (var questEntry in _questEntryComponents)
+        {
+            if (questEntry.StatTrackEntryData.StatName == statName)
+            {
+                questEntry.CheckValuesAndRefreshVisuals(questEntry.StatTrackEntryData);
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ public class ProgressBar : MonoBehaviour
     public void SetValue(float current)
     {
         _currentValue = current;
-        _fillImage.fillAmount = _currentValue / _maxValue;
+        _fillImage.fillAmount = Mathf.Clamp01(_currentValue / _maxValue);
         if (_progressText != null)
         {
             _progressText.text = $"{_currentValue}     /     {_maxValue}";

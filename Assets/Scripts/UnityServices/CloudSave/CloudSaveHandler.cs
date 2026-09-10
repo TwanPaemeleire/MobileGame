@@ -18,7 +18,9 @@ public class CloudSaveHandler : MonoBehaviour
         var playerData = new Dictionary<string, object>
         {
             {"InventoryData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerInventoryData)},
-            {"CurrencyData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerCurrencyData)}
+            {"CurrencyData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerCurrencyData)},
+            {"StatisticsData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerStatisticsData)},
+            {"TimedResetData", JsonUtility.ToJson(PlayerDataHandler.Instance.PlayerTimedResetData)}
         };
         await CloudSaveService.Instance.Data.Player.SaveAsync(playerData);
     }
@@ -27,7 +29,7 @@ public class CloudSaveHandler : MonoBehaviour
     {
         var playerData = await CloudSaveService.Instance.Data.Player.LoadAsync(new HashSet<string> 
         {
-          "InventoryData", "CurrencyData"
+          "InventoryData", "CurrencyData", "StatisticsData", "TimedResetData"
         });
 
         string dataJson = "";
@@ -41,6 +43,12 @@ public class CloudSaveHandler : MonoBehaviour
         {
             dataJson = secondKey.Value.GetAs<string>();
             PlayerDataHandler.Instance.PlayerDataCollection.Currency = JsonUtility.FromJson<PlayerCurrencyData>(dataJson);
+        }
+
+        if (playerData.TryGetValue("StatisticsData", out var thirdKey))
+        {
+            dataJson = thirdKey.Value.GetAs<string>();
+            PlayerDataHandler.Instance.PlayerDataCollection.Statistics = JsonUtility.FromJson<PlayerStatisticsData>(dataJson);
         }
 
         PlayerDataHandler.Instance.DataLoaded = true;
