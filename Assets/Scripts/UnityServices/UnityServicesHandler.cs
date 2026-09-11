@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Unity.Services.Core;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UnityServicesHandler : MonoSingleton<UnityServicesHandler>
 {
@@ -20,9 +21,8 @@ public class UnityServicesHandler : MonoSingleton<UnityServicesHandler>
     public CloudSaveHandler CloudSaveHandler => _cloudSaveHandler;
     public LeaderboardHandler LeaderboardHandler => _leaderboardHandler;
 
-    private float _loadProgress = 0.0f;
-    public float LoadProgress => _loadProgress;
 
+    public UnityEvent AllInitializationsDone = new UnityEvent();
     protected override void Init()
     {
         DoInitialize();
@@ -44,39 +44,30 @@ public class UnityServicesHandler : MonoSingleton<UnityServicesHandler>
 
     private IEnumerator InitializationCoroutine()
     {
-        // NOTE TO MAKE LOADING MORE CLEAR, EVENT FOR WHEN EACH STEP OF THE PROGRESS IS DONE THAT PASSES BOOL ABOUT ITS SUCCESS OR FAILURE, THE USE THIS TO DISPLAY IN UI
 
-        // Can be used to progress a loading bar or something in here
-        float targetAmount = 5.0f;
-        float loadProgress = 0.0f;
-
-        // IAP
-        yield return _IAPHandler.Initialize();
-        _loadProgress = ++loadProgress / targetAmount;
-        Debug.Log("IAP Init done");
-
-        // ADs
+        _IAPHandler.Initialize();
         _adHandler.Initialize();
-        yield return new WaitUntil(() => _adHandler.SDKInitialized);
-        _loadProgress = ++loadProgress / targetAmount;
-        Debug.Log("Ad Init done");
 
-        //Player Authentication
         _authenticationHandler.Initialize();
         yield return new WaitUntil(() => _authenticationHandler.IsSignedIn);
-        _loadProgress = ++loadProgress / targetAmount;
-        Debug.Log("Auth Init done");
-
-        // Cloud saving
-        yield return _cloudSaveHandler.Initialize();
-        _loadProgress = ++loadProgress / targetAmount;
-        Debug.Log("CloudSave Init done");
-
-        // Leaderboard
+        _cloudSaveHandler.Initialize();
         _leaderboardHandler.Initialize();
-        Debug.Log("Leaderboard Init done");
-        _loadProgress = ++loadProgress / targetAmount;
+        yield return new WaitUntil(() => PlayerDataHandler.Instance.DataLoaded);
+        TimedResetHandler.Instance.Initialize();
 
+        yield return new WaitUntil(() => AllInitializationsFinished());
         _initialized = true;
+        AllInitializationsDone.Invoke();
+    }
+
+    private bool AllInitializationsFinished()
+    {
+        bool timedResetData = TimedResetHandler.Instance.IsReadyForUse;
+        bool saveData = PlayerDataHandler.Instance.DataLoaded;
+        bool authentication = _authenticationHandler.IsSignedIn;
+        bool leaderboard = _leaderboardHandler.IsReadyForUse;
+        bool ads = _adHandler.SDKInitialized;
+        bool iap = _IAPHandler.StoreConnected;
+        return timedResetData && saveData && authentication && leaderboard && ads && iap;
     }
 }

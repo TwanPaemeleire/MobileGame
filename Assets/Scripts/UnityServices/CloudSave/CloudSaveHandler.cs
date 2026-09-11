@@ -7,7 +7,12 @@ using UnityEngine.Events;
 public class CloudSaveHandler : MonoBehaviour
 {
     public UnityEvent OnSuccessfullInit = new UnityEvent();
-    public async Task Initialize()
+    public void Initialize()
+    {
+        DoInitialization();
+    }
+
+    private async void DoInitialization()
     {
         await LoadPlayerDataFromCloud();
         OnSuccessfullInit.Invoke();
@@ -56,6 +61,12 @@ public class CloudSaveHandler : MonoBehaviour
         {
             dataJson = fourthKey.Value.GetAs<string>();
             PlayerDataHandler.Instance.PlayerDataCollection.Quests = JsonUtility.FromJson<PlayerQuestData>(dataJson);
+        }
+
+        if(playerData.TryGetValue("TimedResetData", out var fifthKey))
+        {
+            dataJson = fifthKey.Value.GetAs<string>();
+            PlayerDataHandler.Instance.PlayerDataCollection.TimedReset = JsonUtility.FromJson<PlayerTimedResetData>(dataJson);
         }
 
         PlayerDataHandler.Instance.DataLoaded = true;

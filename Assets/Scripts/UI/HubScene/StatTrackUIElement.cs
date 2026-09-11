@@ -12,37 +12,31 @@ public class StatTrackUIElement : MonoBehaviour
     [SerializeField] private CurrencyInfoCollection _currencyInfoCollection;
     private StatTrackEntryData _entry;
     public StatTrackEntryData StatTrackEntryData => _entry;
+    private bool _claimed = false;
 
-    public void CheckValuesAndRefreshVisuals(StatTrackEntryData entry)
+    public void InitializeElement(StatTrackEntryData entry)
     {
         _entry = entry;
         _descriptionText.text = _entry.Description;
-        int currentValue = PlayerDataHandler.Instance.PlayerStatistics.GetStatValue(_entry.StatName, TimedDataType.Daily);
-        _progressBar.InitializeProgressBar(currentValue, _entry.TargetAmount);
+        _progressBar.InitializeProgressBar(0, _entry.TargetAmount);
         _regularRewardElement.AmountText.text = _entry.Reward.Amount.ToString();
         _regularRewardElement.IconImage.sprite = _currencyInfoCollection.CurrencyInfoDictionary[_entry.Reward.CurrencyType];
         _trackRewardElement.AmountText.text = _entry.ContributionToTrack.ToString();
 
-        if (currentValue >= _entry.TargetAmount)
-        {
-            _claimButton.interactable = true;
-        }
-
-        if(PlayerDataHandler.Instance.PlayerQuests.IsQuestCompleted(TimedDataType.Daily, _entry.name))
+        int currentValue = PlayerDataHandler.Instance.PlayerStatistics.GetStatValue(_entry.StatName, TimedDataType.Daily);
+        ChangeValue(currentValue);
+        if (PlayerDataHandler.Instance.PlayerQuests.IsQuestCompleted(TimedDataType.Daily, _entry.name))
         {
             MarkAsClaimed();
         }
     }
 
-    public void OnValueChanged(string statName, int newValue)
+    public void ChangeValue(int newValue)
     {
-        if (statName == _entry.StatName)
+        _progressBar.SetValue(newValue);
+        if (!_claimed && newValue >= _entry.TargetAmount)
         {
-            _progressBar.SetValue(newValue);
-            if (newValue >= _entry.TargetAmount)
-            {
-                _claimButton.interactable = true;
-            }
+            _claimButton.interactable = true;
         }
     }
 
@@ -59,5 +53,6 @@ public class StatTrackUIElement : MonoBehaviour
         transform.SetParent(null);
         transform.SetParent(parent);
         _claimButton.interactable = false;
+        _claimed = true;
     }
 }

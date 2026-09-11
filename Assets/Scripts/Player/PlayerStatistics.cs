@@ -33,7 +33,7 @@ public class PlayerStatistics : MonoBehaviour
 
     public void ResetData(TimedDataType type)
     {
-        if (CurrencyData.Statistics.ContainsKey(type)) CurrencyData.Statistics.Remove(type);
+        if (CurrencyData.Statistics.ContainsKey(type)) CurrencyData.Statistics[type].Clear();
     }
 
     private void EnsureStatPresence(string statName, TimedDataType type)

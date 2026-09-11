@@ -7,8 +7,6 @@ public class RewardTrackWindow : PopUpWindow
     [SerializeField] private Transform _questContainerTransform;
     [SerializeField] private RewardTrackData _rewardTrackData;
 
-    private bool _haveMadeQuests = false;
-
     private List<StatTrackUIElement> _questEntryComponents = new List<StatTrackUIElement>();
 
     protected override void OnWindowOpenedInternal()
@@ -18,7 +16,7 @@ public class RewardTrackWindow : PopUpWindow
         {
             GameObject questEntryObject = Instantiate(_questEntryPrefab, _questContainerTransform);
             var questEntryComponent = questEntryObject.GetComponent<StatTrackUIElement>();
-            questEntryComponent.CheckValuesAndRefreshVisuals(quest);
+            questEntryComponent.InitializeElement(quest);
             _questEntryComponents.Add(questEntryComponent);
             if (PlayerDataHandler.Instance.PlayerQuests.IsQuestCompleted(_rewardTrackData.TimeScope, quest.name))
             {
@@ -45,11 +43,12 @@ public class RewardTrackWindow : PopUpWindow
 
     private void OnStatChanged(string statName, int newValue, TimedDataType type)
     {
+        if (_rewardTrackData.TimeScope != type) return;
         foreach (var questEntry in _questEntryComponents)
         {
             if (questEntry.StatTrackEntryData.StatName == statName)
             {
-                questEntry.CheckValuesAndRefreshVisuals(questEntry.StatTrackEntryData);
+                questEntry.ChangeValue(newValue);
             }
         }
     }

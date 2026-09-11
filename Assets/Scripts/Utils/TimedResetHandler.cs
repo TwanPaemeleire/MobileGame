@@ -15,13 +15,14 @@ public class TimedResetHandler : MonoSingleton<TimedResetHandler>
     private int _secondsUntilNextWeeklyReset = -1;
 
     public PlayerTimedResetData PlayerTimedResetData => PlayerDataHandler.Instance.PlayerTimedResetData;
-    private bool _serverStartDateLoaded = false;
-    public bool ServerStartDateLoaded => _serverStartDateLoaded;
+    private bool _isReadyForUse = false;
+    public bool IsReadyForUse => _isReadyForUse;
 
     public UnityEvent OnDailyReset = new UnityEvent();
     public UnityEvent OnWeeklyReset = new UnityEvent();
+    public UnityEvent OnSuccesfullInit = new UnityEvent();
 
-    protected override void Init()
+    public void Initialize()
     {
         InitializeTime();
     }
@@ -34,7 +35,9 @@ public class TimedResetHandler : MonoSingleton<TimedResetHandler>
             string serverStartDateString = serverStartDateEntry.Value.GetAs<string>();
             _serverStartDateUTC = DateTime.Parse(serverStartDateString, null, System.Globalization.DateTimeStyles.RoundtripKind);
         }
-        _serverStartDateLoaded = true;
+        _isReadyForUse = true;
+        CheckResets();
+        OnSuccesfullInit.Invoke();
         StartCoroutine(TimePassingCoroutine());
         Debug.Log($"Server Start Date: {_serverStartDateUTC.ToString("o")}");
     }
@@ -48,7 +51,8 @@ public class TimedResetHandler : MonoSingleton<TimedResetHandler>
         if (daysSinceStart > lastResetDay)
         {
             PlayerTimedResetData.LastDailyResetDay = daysSinceStart;
-            RequestSavePlayerData();
+            ResetTimedData(TimedDataType.Daily);
+            Debug.Log("All daily data has been reset");
             return true;
         }
         return false;
@@ -62,10 +66,17 @@ public class TimedResetHandler : MonoSingleton<TimedResetHandler>
         if (weeksSinceStart > lastResetWeek)
         {
             PlayerTimedResetData.LastWeeklyResetWeek = weeksSinceStart;
-            RequestSavePlayerData();
+            ResetTimedData(TimedDataType.Weekly);
+            Debug.Log("All weekly data has been reset");
             return true;
         }
         return false;
+    }
+
+    private void ResetTimedData(TimedDataType timeScope)
+    {
+        PlayerDataHandler.Instance.PlayerStatistics.ResetData(timeScope);
+        PlayerDataHandler.Instance.PlayerQuests.ResetData(timeScope);
     }
 
     private async void RequestSavePlayerData()
@@ -75,19 +86,20 @@ public class TimedResetHandler : MonoSingleton<TimedResetHandler>
 
     private void CheckResets()
     {
-        if (IsDailyResetDue())
+        bool dailyReset = IsDailyResetDue();
+        bool weeklyReset = IsWeeklyResetDue();
+        if (dailyReset)
         {
             PlayerDataHandler.Instance.PlayerStatistics.ResetData(TimedDataType.Daily);
             OnDailyReset.Invoke();
         }
-        if (IsWeeklyResetDue())
+        if (weeklyReset)
         {
             PlayerDataHandler.Instance.PlayerStatistics.ResetData(TimedDataType.Weekly);
             OnWeeklyReset.Invoke();
         }
+        if (dailyReset || weeklyReset) RequestSavePlayerData();
     }
-
-    // NOTE TO SELF: STORE ID OF ALL THE CLAIMED QUESTS IN THE TIMED DATE STUFF IN PLAYER DATA HANDLER, THEN MAKE EVERYTHING JUST DATA-DRIVEN
 
     private IEnumerator TimePassingCoroutine()
     {

@@ -89,5 +89,5 @@ public class PlayerDataHandler : MonoSingleton<PlayerDataHandler>
     public PlayerCurrencyData PlayerCurrencyData { get { return _playerDataCollection.Currency; } set { _playerDataCollection.Currency = value; } }
     public PlayerStatisticsData PlayerStatisticsData { get { return _playerDataCollection.Statistics; } set { _playerDataCollection.Statistics = value; } }
     public PlayerTimedResetData PlayerTimedResetData { get { return _playerDataCollection.TimedReset; } set { _playerDataCollection.TimedReset = value; } }
-    public PlayerQuestData PlayerQuestsData => _playerDataCollection.Quests;// { get { return _playerDataCollection.Quests; } set { _playerDataCollection.Quests = value; } }
+    public PlayerQuestData PlayerQuestsData => _playerDataCollection.Quests;
 }

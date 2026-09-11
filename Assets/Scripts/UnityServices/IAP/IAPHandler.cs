@@ -14,7 +14,12 @@ public class IAPHandler : MonoBehaviour
     public bool StoreConnected => _storeConnected;
     public UnityEvent OnSuccesfullInit = new UnityEvent();
 
-    public async Task Initialize()
+    public void Initialize()
+    {
+        DoInitialization();
+    }
+
+    private async void DoInitialization()
     {
         _storeController = UnityIAPServices.StoreController();
         _storeController.OnPurchasePending += OnPurchasePending;

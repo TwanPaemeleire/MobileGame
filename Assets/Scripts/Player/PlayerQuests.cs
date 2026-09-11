@@ -18,4 +18,9 @@ public class PlayerQuests : MonoBehaviour
         if (!QuestData.QuestsData.ContainsKey(timeScope)) QuestData.QuestsData.Add(timeScope, new List<string>());
         return QuestData.QuestsData[timeScope].Contains(questId);
     }
+
+    public void ResetData(TimedDataType timeScope)
+    {
+        if (QuestData.QuestsData.ContainsKey(timeScope)) QuestData.QuestsData[timeScope].Clear();
+    }
 }

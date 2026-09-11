@@ -11,8 +11,11 @@ using UnityEngine.Events;
 public class LeaderboardHandler : MonoBehaviour
 {
     public UnityEvent OnSuccesfullInit = new UnityEvent();
+    private bool _isReadyForUse = false;
+    public bool IsReadyForUse => _isReadyForUse;
     public void Initialize()
     {
+        _isReadyForUse = true;
         OnSuccesfullInit.Invoke();
     }
 
