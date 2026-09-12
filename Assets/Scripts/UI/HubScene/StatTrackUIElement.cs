@@ -1,4 +1,7 @@
+using AYellowpaper.SerializedCollections;
+using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,6 +48,12 @@ public class StatTrackUIElement : MonoBehaviour
         MarkAsClaimed();
         PlayerDataHandler.Instance.PlayerCurrency.AddCurrency(_entry.Reward.Amount, _entry.Reward.CurrencyType);
         PlayerDataHandler.Instance.PlayerQuests.AddCompletedQuest(TimedDataType.Daily, _entry.name);
+        List<RewardData> rewards = new();
+        RewardData rewardData = new RewardData();
+        rewardData.Amount = _entry.Reward.Amount;
+        rewardData.CurrencyType = _entry.Reward.CurrencyType;
+        rewards.Add(rewardData);
+        PopUpWindowRequestHandler.Instance.RequestRewardPopUpWindow(rewards);
     }
 
     public void MarkAsClaimed()

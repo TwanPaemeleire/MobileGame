@@ -1,14 +1,13 @@
-using AYellowpaper.SerializedCollections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PopUpWindowRequestHandler : MonoSingleton<PopUpWindowRequestHandler>
 {
-    [SerializeField] private GameObject _rewardPopUpPrefab;
+    [SerializeField] private RewardPopUpWindow _rewardPopUp;
 
-    public void RequestRewardPopUpWindow(SerializedDictionary<CurrencyType, int> rewardData)
+    public void RequestRewardPopUpWindow(List<RewardData> rewardsData)
     {
-        GameObject popUpObject = Instantiate(_rewardPopUpPrefab);
-        RewardPopUpWindow rewardPopUpWindow = popUpObject.GetComponent<RewardPopUpWindow>();
-        rewardPopUpWindow.Initialize(rewardData);
+        _rewardPopUp.OpenWindow();
+        _rewardPopUp.Initialize(rewardsData);
     }
 }

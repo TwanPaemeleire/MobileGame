@@ -6,7 +6,13 @@ public class PopUpWindow : MonoBehaviour
 {
     [SerializeField] private bool _closesOnClickOutside = true;
 
+    [ShowIf(ActionOnConditionFail.DONT_DRAW, ConditionOperator.AND, nameof(_closesOnClickOutside))]
+    [SerializeField] private RectTransform _closeClickBounds;
+
     [SerializeField] private bool _doPopUpAnimation = true;
+    [ShowIf(ActionOnConditionFail.DONT_DRAW, ConditionOperator.AND, nameof(_doPopUpAnimation))]
+    [SerializeField] private RectTransform _popUpTarget;
+
     [ShowIf(ActionOnConditionFail.DONT_DRAW, ConditionOperator.AND, nameof(_doPopUpAnimation))]
     [SerializeField] private float _popUpMaxScale = 1.1f;
     [ShowIf(ActionOnConditionFail.DONT_DRAW, ConditionOperator.AND, nameof(_doPopUpAnimation))]
@@ -19,6 +25,8 @@ public class PopUpWindow : MonoBehaviour
 
     public void OpenWindow()
     {
+        if (_closeClickBounds == null) _closeClickBounds = GetComponent<RectTransform>();
+        if (_popUpTarget == null) _popUpTarget = GetComponent<RectTransform>();
         InputHandler.Instance.OnTouchStarted.AddListener(OnClickStarted);
         OnWindowOpenedInternal();
         gameObject.SetActive(true);
@@ -41,7 +49,7 @@ public class PopUpWindow : MonoBehaviour
     private void OnClickStarted(int id)
     {
         if (!_closesOnClickOutside || InputHandler.Instance.TouchCount != 1) return;
-        if (!InputHandler.Instance.IsTouchInsideRectTransform(id, GetComponent<RectTransform>()))
+        if (!InputHandler.Instance.IsTouchInsideRectTransform(id, _closeClickBounds))
         {
             CloseWindow();
         }
@@ -55,16 +63,15 @@ public class PopUpWindow : MonoBehaviour
 
     private IEnumerator ChangeScale(float from, float to, float duration)
     {
-        RectTransform rectTransform = GetComponent<RectTransform>();
         float timer = 0.0f;
         while(timer < duration)
         {
             timer += Time.deltaTime;
             float t = Mathf.Clamp01(timer / duration);
             float scale = Mathf.SmoothStep(from, to, t);
-            rectTransform.localScale = new Vector3(scale, scale, scale);
+            _popUpTarget.localScale = new Vector3(scale, scale, scale);
             yield return null;
         }
-        rectTransform.localScale = new Vector3(to, to, to);
+        _popUpTarget.localScale = new Vector3(to, to, to);
     }
 }
